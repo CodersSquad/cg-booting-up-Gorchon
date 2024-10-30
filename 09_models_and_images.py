@@ -2,25 +2,30 @@ import math
 import os
 import sys
 
-import glm  # Ensure you have PyGLM installed: pip install PyGLM
-import moderngl  # Ensure you have ModernGL installed: pip install moderngl
-import pygame  # Ensure you have Pygame installed: pip install pygame
-from objloader import Obj  # Ensure objloader is available; it may require installation or adjustment
-from PIL import Image  # Ensure you have Pillow installed: pip install Pillow
+import glm
+import moderngl
+import pygame
+from objloader import Obj
+from PIL import Image
 
 # Set DPI awareness for high-resolution displays
 os.environ['SDL_WINDOWS_DPI_AWARENESS'] = 'permonitorv2'
 
-# Initialize Pygame
 pygame.init()
+
+# Set OpenGL context version to 3.2 for compatibility with M1 Macs
+pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3)
+pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 2)
+pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_CORE)
+
+# Initialize the pygame display with OpenGL
 pygame.display.set_mode((800, 800), flags=pygame.OPENGL | pygame.DOUBLEBUF, vsync=True)
 
-# ImageTexture class to load and use textures
+
 class ImageTexture:
     def __init__(self, path):
         self.ctx = moderngl.get_context()
-
-        img = Image.open(path).convert('RGBA')  # Ensure image is in RGBA format
+        img = Image.open(path).convert('RGBA')
         self.texture = self.ctx.texture(img.size, 4, img.tobytes())
         self.sampler = self.ctx.sampler(texture=self.texture)
 
@@ -28,19 +33,16 @@ class ImageTexture:
         self.sampler.use()
 
 
-# ModelGeometry class for loading 3D model geometries
 class ModelGeometry:
     def __init__(self, path):
         self.ctx = moderngl.get_context()
-
-        obj = Obj.open(path)  # Load the OBJ model
+        obj = Obj.open(path)
         self.vbo = self.ctx.buffer(obj.pack('vx vy vz nx ny nz tx ty'))
 
     def vertex_array(self, program):
         return self.ctx.vertex_array(program, [(self.vbo, '3f 12x 2f', 'in_vertex', 'in_uv')])
 
 
-# Mesh class to handle rendering of geometries
 class Mesh:
     def __init__(self, program, geometry, texture=None):
         self.ctx = moderngl.get_context()
@@ -49,33 +51,31 @@ class Mesh:
 
     def render(self, position, color, scale):
         self.vao.program['use_texture'] = False
-
         if self.texture:
             self.vao.program['use_texture'] = True
             self.texture.use()
-
         self.vao.program['position'] = position
         self.vao.program['color'] = color
         self.vao.program['scale'] = scale
         self.vao.render()
 
 
-# Scene class for setting up and rendering the scene
 class Scene:
     def __init__(self):
         self.ctx = moderngl.get_context()
 
+        # Updated shader version to 150 for compatibility
         self.program = self.ctx.program(
             vertex_shader='''
-                #version 330 core
+                #version 150
 
                 uniform mat4 camera;
                 uniform vec3 position;
                 uniform float scale;
 
-                layout (location = 0) in vec3 in_vertex;
-                layout (location = 1) in vec3 in_normal;
-                layout (location = 2) in vec2 in_uv;
+                in vec3 in_vertex;
+                in vec3 in_normal;
+                in vec2 in_uv;
 
                 out vec3 v_vertex;
                 out vec3 v_normal;
@@ -90,7 +90,7 @@ class Scene:
                 }
             ''',
             fragment_shader='''
-                #version 330 core
+                #version 150
 
                 uniform sampler2D Texture;
                 uniform bool use_texture;
@@ -100,7 +100,7 @@ class Scene:
                 in vec3 v_normal;
                 in vec2 v_uv;
 
-                layout (location = 0) out vec4 out_color;
+                out vec4 out_color;
 
                 void main() {
                     out_color = vec4(color, 1.0);
@@ -111,29 +111,38 @@ class Scene:
             ''',
         )
 
-        self.texture = ImageTexture('examples/data/textures/crate.png')
+        self.texture = ImageTexture('/Users/chema./Documents/Programming/ComputerGraphics/class1/cg-booting-up-Gorchon/image.png')
 
-        self.car_geometry = ModelGeometry('examples/data/models/lowpoly_toy_car.obj')
+        self.car_geometry = ModelGeometry('/Users/chema./Documents/Programming/ComputerGraphics/class1/cg-booting-up-Gorchon/lowpoly_toy_car.obj')
         self.car = Mesh(self.program, self.car_geometry)
 
         self.crate_geometry = ModelGeometry('examples/data/models/crate.obj')
         self.crate = Mesh(self.program, self.crate_geometry, self.texture)
 
+    def perspective(self, fov, aspect, near, far):
+        tan_half_fov = math.tan(math.radians(fov) / 2)
+        z_range = near - far
+        return np.array([
+            [1 / (aspect * tan_half_fov), 0, 0, 0],
+            [0, 1 / tan_half_fov, 0, 0],
+            [0, 0, (near + far) / z_range, 2 * near * far / z_range],
+            [0, 0, -1, 0]
+        ], dtype=np.float32)
+
     def camera_matrix(self):
         now = pygame.time.get_ticks() / 1000.0
         eye = (math.cos(now), math.sin(now), 0.5)
-        proj = glm.perspective(glm.radians(45.0), 800 / 800, 0.1, 1000.0)  # Update for aspect ratio
-        look = glm.lookAt(glm.vec3(eye), glm.vec3(0.0, 0.0, 0.0), glm.vec3(0.0, 0.0, 1.0))
-        return proj * look
+        proj = glm.perspective(45.0, 1.0, 0.1, 1000.0)
+        look = glm.lookAt(eye, (0.0, 0.0, 0.0), (0.0, 0.0, 1.0))
+        return proj @ look
 
     def render(self):
         camera = self.camera_matrix()
-
         self.ctx.clear()
         self.ctx.enable(self.ctx.DEPTH_TEST)
-
         self.program['camera'].write(camera)
 
+        # Render the car and crate with different positions and colors
         self.car.render((-0.4, 0.0, 0.0), (1.0, 0.0, 0.0), 0.2)
         self.crate.render((0.0, 0.0, 0.0), (1.0, 1.0, 1.0), 0.2)
         self.car.render((0.4, 0.0, 0.0), (0.0, 0.0, 1.0), 0.2)
@@ -148,5 +157,4 @@ while True:
             sys.exit()
 
     scene.render()
-
     pygame.display.flip()
