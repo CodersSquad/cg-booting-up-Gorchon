@@ -161,3 +161,77 @@ If you encounter any errors:
 1. Verify that the virtual environment is activated and all dependencies are installed.
 2. Confirm that your Python and OpenGL versions are compatible with your system.
 
+
+# Computer Graphics Program - Part 3
+
+This is the third part of a computer graphics program that uses `OpenGL`, `moderngl`, `pygame`, `PyGLM`, and `Pillow` to render models with textures and multiple objects in a scene.
+
+## Prerequisites
+
+Make sure you have **Python 3** installed on your system. You will also need the following Python libraries:
+- `moderngl`
+- `pygame`
+- `PyGLM`
+- `Pillow` (for image handling)
+- `objloader` (for handling `.obj` model files)
+
+## Setup
+
+### Step 1: Set Up the Virtual Environment
+
+1. Open your terminal.
+2. Navigate to the project directory.
+3. If you already have a virtual environment, activate it. If not, create and activate one with:
+   ```bash
+   python3 -m venv myenv
+   source myenv/bin/activate
+   ```
+
+### Step 2: Install Required Packages
+
+With the virtual environment activated, install the necessary packages:
+
+```bash
+pip install moderngl pygame PyGLM Pillow objloader
+```
+
+This will install:
+- **`moderngl`**: For managing OpenGL context and shaders.
+- **`pygame`**: For window management and rendering.
+- **`PyGLM`**: For OpenGL Mathematics.
+- **`Pillow`**: For loading and managing images.
+- **`objloader`**: For loading `.obj` model files.
+
+### Step 3: Place Required Files
+
+Ensure that the following files are available in the specified paths:
+1. `image.png`: A texture image for rendering, located at `/Users/chema./Documents/Programming/ComputerGraphics/class1/cg-booting-up-Gorchon/image.png`
+2. `lowpoly_toy_car.obj`: A model file for the car object, located at `/Users/chema./Documents/Programming/ComputerGraphics/class1/cg-booting-up-Gorchon/lowpoly_toy_car.obj`
+3. `crate.obj`: A model file for the crate object, located at `/Users/chema./Documents/Programming/ComputerGraphics/class1/cg-booting-up-Gorchon/crate.obj`
+
+Update the file paths in the code if these files are stored in different locations.
+
+### Step 4: Run the Program
+
+To run the program, execute:
+
+```bash
+python 09_models_and_images.py
+```
+
+The program will open an 800x800 pixel window displaying models rendered with OpenGL. The scene includes a car and a crate with applied textures, each rendered with specified positions, colors, and scales.
+
+## Program Description
+
+This program defines several classes for handling textures, models, and scenes:
+1. **`ImageTexture`**: Manages loading and applying textures to models.
+2. **`ModelGeometry`**: Loads model data from `.obj` files.
+3. **`Mesh`**: Renders models with or without textures.
+4. **`Scene`**: Handles the OpenGL context, shaders, and object positions, including a `camera_matrix` function for dynamic camera movement.
+
+The shaders use a `#version 150` GLSL specification to ensure compatibility on M1 Macs and other environments.
+
+## Troubleshooting
+
+1. **File Not Found**: Ensure paths are correct and files are located at specified paths.
+2. **GLSL Version Errors**: The shaders use `#version 150`. Make sure your system supports OpenGL 3.2.
