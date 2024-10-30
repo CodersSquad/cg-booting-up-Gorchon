@@ -84,7 +84,7 @@ class Scene:
                 void main() {
                     v_vertex = position + in_vertex * scale;
                     v_normal = in_normal;
-                    v_uv = in_uv;
+                    v_uv = -in_uv;
 
                     gl_Position = camera * vec4(v_vertex, 1.0);
                 }
@@ -116,7 +116,7 @@ class Scene:
         self.car_geometry = ModelGeometry('/Users/chema./Documents/Programming/ComputerGraphics/class1/cg-booting-up-Gorchon/lowpoly_toy_car.obj')
         self.car = Mesh(self.program, self.car_geometry)
 
-        self.crate_geometry = ModelGeometry('examples/data/models/crate.obj')
+        self.crate_geometry = ModelGeometry('/Users/chema./Documents/Programming/ComputerGraphics/class1/cg-booting-up-Gorchon/crate.obj')
         self.crate = Mesh(self.program, self.crate_geometry, self.texture)
 
     def perspective(self, fov, aspect, near, far):
