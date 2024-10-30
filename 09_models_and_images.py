@@ -2,23 +2,25 @@ import math
 import os
 import sys
 
-import glm
-import moderngl
-import pygame
-from objloader import Obj
-from PIL import Image
+import glm  # Ensure you have PyGLM installed: pip install PyGLM
+import moderngl  # Ensure you have ModernGL installed: pip install moderngl
+import pygame  # Ensure you have Pygame installed: pip install pygame
+from objloader import Obj  # Ensure objloader is available; it may require installation or adjustment
+from PIL import Image  # Ensure you have Pillow installed: pip install Pillow
 
+# Set DPI awareness for high-resolution displays
 os.environ['SDL_WINDOWS_DPI_AWARENESS'] = 'permonitorv2'
 
+# Initialize Pygame
 pygame.init()
 pygame.display.set_mode((800, 800), flags=pygame.OPENGL | pygame.DOUBLEBUF, vsync=True)
 
-
+# ImageTexture class to load and use textures
 class ImageTexture:
     def __init__(self, path):
         self.ctx = moderngl.get_context()
 
-        img = Image.open(path).convert('RGBA')
+        img = Image.open(path).convert('RGBA')  # Ensure image is in RGBA format
         self.texture = self.ctx.texture(img.size, 4, img.tobytes())
         self.sampler = self.ctx.sampler(texture=self.texture)
 
@@ -26,17 +28,19 @@ class ImageTexture:
         self.sampler.use()
 
 
+# ModelGeometry class for loading 3D model geometries
 class ModelGeometry:
     def __init__(self, path):
         self.ctx = moderngl.get_context()
 
-        obj = Obj.open(path)
+        obj = Obj.open(path)  # Load the OBJ model
         self.vbo = self.ctx.buffer(obj.pack('vx vy vz nx ny nz tx ty'))
 
     def vertex_array(self, program):
         return self.ctx.vertex_array(program, [(self.vbo, '3f 12x 2f', 'in_vertex', 'in_uv')])
 
 
+# Mesh class to handle rendering of geometries
 class Mesh:
     def __init__(self, program, geometry, texture=None):
         self.ctx = moderngl.get_context()
@@ -56,6 +60,7 @@ class Mesh:
         self.vao.render()
 
 
+# Scene class for setting up and rendering the scene
 class Scene:
     def __init__(self):
         self.ctx = moderngl.get_context()
@@ -117,8 +122,8 @@ class Scene:
     def camera_matrix(self):
         now = pygame.time.get_ticks() / 1000.0
         eye = (math.cos(now), math.sin(now), 0.5)
-        proj = glm.perspective(45.0, 1.0, 0.1, 1000.0)
-        look = glm.lookAt(eye, (0.0, 0.0, 0.0), (0.0, 0.0, 1.0))
+        proj = glm.perspective(glm.radians(45.0), 800 / 800, 0.1, 1000.0)  # Update for aspect ratio
+        look = glm.lookAt(glm.vec3(eye), glm.vec3(0.0, 0.0, 0.0), glm.vec3(0.0, 0.0, 1.0))
         return proj * look
 
     def render(self):
