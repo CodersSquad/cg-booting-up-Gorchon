@@ -206,12 +206,13 @@ This will install:
 
 ### Step 3: Place Required Files
 
-Ensure that the following files are available in the specified paths:
-1. `image.png`: This file should be an image of the logo of your school, located at `/Users/chema./Documents/Programming/ComputerGraphics/class1/cg-booting-up-Gorchon/image.png`.
-2. `lowpoly_toy_car.obj`: A model file for the car object, located at `/Users/chema./Documents/Programming/ComputerGraphics/class1/cg-booting-up-Gorchon/lowpoly_toy_car.obj`
-3. `crate.obj`: A model file for the crate object, located at `/Users/chema./Documents/Programming/ComputerGraphics/class1/cg-booting-up-Gorchon/crate.obj`
 
-Update the file paths in the code if these files are stored in different locations.
+Ensure that the following files are available in the same directory as your script (`cg-booting-up-Gorchon`):
+1. `image.png`: This should be an image of the logo of ITESM. Place it directly in the `cg-booting-up-Gorchon` folder.
+2. `lowpoly_toy_car.obj`: A model file for the car object, also located in the `cg-booting-up-Gorchon` folder.
+3. `crate.obj`: A model file for the crate object, located in the same `cg-booting-up-Gorchon` folder.
+
+The code right now references these files with relative paths (e.g., `'image.png'`, `'lowpoly_toy_car.obj'`, and `'crate.obj'`). If you place the files in different locations, update the file paths in the code accordingly.
 
 ### Step 4: Run the Program
 
