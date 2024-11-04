@@ -110,13 +110,15 @@ class Scene:
                 }
             ''',
         )
+        
+        
 
-        self.texture = ImageTexture('/Users/chema./Documents/Programming/ComputerGraphics/class1/cg-booting-up-Gorchon/image.png')
+        self.texture = ImageTexture('image.png')
 
-        self.car_geometry = ModelGeometry('/Users/chema./Documents/Programming/ComputerGraphics/class1/cg-booting-up-Gorchon/lowpoly_toy_car.obj')
+        self.car_geometry = ModelGeometry('lowpoly_toy_car.obj')
         self.car = Mesh(self.program, self.car_geometry)
 
-        self.crate_geometry = ModelGeometry('/Users/chema./Documents/Programming/ComputerGraphics/class1/cg-booting-up-Gorchon/crate.obj')
+        self.crate_geometry = ModelGeometry('crate.obj')
         self.crate = Mesh(self.program, self.crate_geometry, self.texture)
 
     def perspective(self, fov, aspect, near, far):
