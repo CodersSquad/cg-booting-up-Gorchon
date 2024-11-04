@@ -147,7 +147,7 @@ The program will open an 800x800 pixel window, where you  will be able to apprec
 
 ## Program Description
 
-This script defines a `Scene` class that manages multiple objects rendered with `moderngl`. The program also uses `pygame` for window management and event handling, allowing users to close the window with the `QUIT` event. 
+This script defines a `Scene` class that manages multiple objects rendered with `moderngl`. The program also uses `pygame` for window management same as in prevous excercise, and event handling, allowing users to close the window with the `QUIT` event. 
 
 Each object in the scene has:
 - Dynamic color and position, which change in real time.
