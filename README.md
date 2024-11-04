@@ -54,7 +54,7 @@ The program opens an 800x800 pixel window with OpenGL rendering, changing backgr
 
 ## Program Description
 
-This script defines a `Scene` class that uses `moderngl` to manage an OpenGL context and clears the display to a color that changes over time. `pygame` is used to manage the display window and handle events, such as closing the window. The program continuously updates the display until the user exits.
+In this script we can appreciate an `Scene` class that uses `moderngl` to manage an OpenGL context and clears the display to a color that changes over time. `pygame` is used to manage the display window and handle events, such as closing the window. The program continuously updates the display until the user exits.
 
 ```python
 import math
@@ -93,7 +93,7 @@ while True:
 
 ## Troubleshooting
 
-If you encounter any errors, ensure you have activated the virtual environment and installed the dependencies. If any issues persist, confirm that `pygame` and `moderngl` are properly installed and compatible with your Python version.
+If for any reason you find errors, ensure you have activated the virtual environment and installed the dependencies. If any issues persist, confirm that `pygame` and `moderngl` are properly installed and compatible with your Python version.
 
 
 
@@ -143,7 +143,7 @@ To start the program, execute:
 python 06_multiple_objects.py
 ```
 
-The program will open an 800x800 pixel window, displaying multiple objects rendered in different colors with dynamic positions and transformations.
+The program will open an 800x800 pixel window, where you  will be able to appreciate multiple objects rendered in different colors with dynamic positions and transformations.
 
 ## Program Description
 
